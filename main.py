@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 import os 
 from dotenv import load_dotenv
+import smtplib
 
 load_dotenv()
 
@@ -267,10 +268,24 @@ def about():
     return render_template("about.html", current_user=current_user)
 
 
-@app.route("/contact")
+@app.route('/contact', methods=["GET","POST"])
 def contact():
-    return render_template("contact.html", current_user=current_user)
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        phone = request.form["phone"]
+        message = request.form["message"]
 
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()
+            connection.login(user=os.environ.get("EMAIL"), password=os.environ.get("PASSWORD"))
+            connection.sendmail(from_addr=os.environ.get("EMAIL"), 
+                                to_addrs=os.environ.get("EMAIL_RECEIVES_MESSAGE"), 
+                                msg=f"Subject:New Contact Form Submission\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}")
+
+        return render_template("contact.html", msg_sent=True)
+    
+    return render_template("contact.html", msg_sent=False)
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("DEBUG") == "True", port=5002)
