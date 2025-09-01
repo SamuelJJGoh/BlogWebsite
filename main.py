@@ -95,7 +95,7 @@ def register():
     register_form = RegisterForm()
     if request.method == "POST" and register_form.validate_on_submit(): 
         entered_password = register_form.password.data
-        hashed_salted_password = generate_password_hash(entered_password, method="pbkdf2:sha256:60000", salt_length=16)
+        hashed_salted_password = generate_password_hash(entered_password, method="pbkdf2:sha256:60000", salt_length=8)
         new_user = User(
             email = register_form.email.data,
             password = hashed_salted_password,
