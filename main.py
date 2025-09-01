@@ -6,8 +6,7 @@ from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, ForeignKey
-from typing import List
+from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
@@ -55,8 +54,8 @@ class User(UserMixin, db.Model):
 
     # This will act like a List of BlogPost objects attached to each User. 
     # The "author" refers to the author property in the BlogPost class.
-    posts : Mapped[List["BlogPost"]] = relationship(back_populates="author")
-    comments: Mapped[List["Comment"]] = relationship(back_populates="comment_author")
+    posts = relationship("BlogPost", back_populates="author")
+    comments = relationship("Comment", back_populates="comment_author")
 
 # Child of User (each User can have many blogposts)
 class BlogPost(db.Model):
@@ -69,10 +68,10 @@ class BlogPost(db.Model):
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
 
     # Create Foreign Key "users.id", users refers to the tablename of User
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
-    author: Mapped["User"] = relationship(back_populates="posts")
+    author_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("users.id"))
+    author = relationship("User", back_populates="posts")
 
-    comments: Mapped[List["Comment"]] = relationship(back_populates="parent_post")
+    comments = relationship("Comment", back_populates="parent_post")
 
 # Child of User (each User can have many comments)
 # Child of BlogPost (each BlogPost can have many comments)
@@ -81,11 +80,11 @@ class Comment(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     text: Mapped[str] = mapped_column(Text, nullable=False)
 
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
-    comment_author: Mapped["User"] = relationship(back_populates="comments")
+    author_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("users.id"))
+    comment_author = relationship("User", back_populates="comments")
 
-    post_id: Mapped[int] = mapped_column(Integer, ForeignKey("blog_posts.id"))
-    parent_post: Mapped["BlogPost"] = relationship(back_populates="comments")
+    post_id: Mapped[str] = mapped_column(Integer, db.ForeignKey("blog_posts.id"))
+    parent_post = relationship("BlogPost", back_populates="comments")
 
 with app.app_context():
     db.create_all()
