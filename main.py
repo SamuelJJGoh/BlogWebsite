@@ -71,7 +71,8 @@ class BlogPost(db.Model):
     author_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("users.id"))
     author = relationship("User", back_populates="posts")
 
-    comments = relationship("Comment", back_populates="parent_post")
+    # Deletes all comments on a post when the post is deleted
+    comments = relationship("Comment", back_populates="parent_post", cascade="all, delete-orphan")
 
 # Child of User (each User can have many comments)
 # Child of BlogPost (each BlogPost can have many comments)
