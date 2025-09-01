@@ -194,6 +194,8 @@ def commenter_only(func):
     @wraps(func)
     @login_required
     def decorated_function(*args, **kwargs):
+        if current_user.id == 1:
+            return func(*args, **kwargs)
         user = db.session.execute(db.select(Comment).where(Comment.author_id == current_user.id)).scalar()
         if not current_user.is_authenticated or user.author_id != current_user.id:
             return abort(403)
