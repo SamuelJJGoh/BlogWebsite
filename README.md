@@ -19,6 +19,12 @@ You can visit the live website here: https://blogwebsite-ee3d.onrender.com/
 
 ---
 
+## Template Attribution
+
+This project uses the **Clean Blog** template from [Start Bootstrap](https://startbootstrap.com/theme/clean-blog).
+
+---
+
 ## Installation
 
 To run this project locally:
